@@ -10,7 +10,7 @@
 ;	https://github.com/Leyline77/idleChampions-ahk
 ;
 ; edited oldhasu (Discord: oldhasu) 30.09.2022
-; (!) fork (!)
+; (!) fork (!) https://github.com/oldhasu/idleChampions-ahk
 ;
 ;	This script adopted and maintained for the benefit of the gaming community.  It is free to use for non commercial purposes.
 ;
