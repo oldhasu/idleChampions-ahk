@@ -22,11 +22,11 @@ Idle Champions of the Forgotten Realms AHK Macro Scripts
 - from striderx2048 210614
 - edited retaki
 - edited Leyline (discord: Swamp Fox II) 2021-09-23
+- edited oldhasu (discord: oldhasu) 30.09.2022 (!) fork (!) https://github.com/oldhasu/idleChampions-ahk
 
 # Helpful tips
  - Use the PAUSE / BREAK key on your keyboard to pause the script.
-   - example: If you set your rate to 1 second or turn on a clicking feature,
-   - you may have a hard time changing settings because the click / key spam is focuses back to IC
+ - Use HookWindow to hook this ahk script to game window in case game restarted or just restart the script
  - The script has a 3s delay for typing safety.
    - If you have pressed a key (anywhere in your PC) recently then you may think the script did not fire a keypress when it was supposed to
   	- You are correct: it skipped the keypress command and it will continue the next loop (after 3s of no key activity that is)
