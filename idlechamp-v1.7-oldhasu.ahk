@@ -4,13 +4,13 @@
 ; edited retaki
 ; credit to https://github.com/mikebaldi/Idle-Champions with courtesy permission to use
 ;
-; Current Version: 1.7.0 - 2022-09-30
+; Current Version: 1.7.1 - 2022-09-30
 ;
 ; edited Leyline (Discord: Swamp Fox II) 2021-09-23
 ;	https://github.com/Leyline77/idleChampions-ahk
 ;
-; edited oldhasu (Discord: oldhasu) 30.09.2022
-; (!) fork (!) https://github.com/oldhasu/idleChampions-ahk
+; edited oldhasu (Discord: oldhasu) 2022-10-01
+; https://github.com/oldhasu/idleChampions-ahk
 ;
 ;	This script adopted and maintained for the benefit of the gaming community.  It is free to use for non commercial purposes.
 ;
@@ -23,7 +23,8 @@
 ;
 ; # Helpful tips
 ;  - Use the PAUSE / BREAK key on your keyboard to pause the script.
-;  - Use HookWindow to hook this ahk script to game window in case game restarted or just restart the script	
+;  - Use HookWindow to hook this ahk script to game window (in case the game has been restarted) or just restart the script.
+;  - Use Save Setting / Load Settings buttons to store your own custom settings for future use.	
 ;  - The script has a 3s delay for typing safety.
 ;    - If you have pressed a key (anywhere in your PC) recently then you may think the script did not fire a keypress when it was supposed to
 ;   	- You are correct: it skipped the keypress command and it will continue the next loop (after 3s of no key activity that is)
@@ -33,10 +34,7 @@
 ;   	- You can pick just one formation to increment by only setting a time delay for that formation.
 ;  - Repeat Formation:
 ;   	- This is for one or more special missions where your party members are kicked out and you want to reload them (it was here when I adopted the script)
-;  -	Allow L Pause
-;   	-	This is a setting to allow pause/unpause of the script while remoting in from a limited mobile keyboard (steam link etc)
-;  -	Quick Settings
-;   		- These are Settings instilled by me for how I run my quick Gem Farm, I'm the dev, I get treats :)
+
 ;
 ;	1.5.0
 ;		started development off ot the 1.4e code base
@@ -104,9 +102,14 @@
 ;		Started development on saving settings to JSON
 ;		Started development on Reset game for farming / core < level 3
 ;
-;	1.7.0 fork (!) oldhasu - Added hook window function and button to stop ahk GUI change focus
-;		My own custom settings instead of Leyline :)
-;		Plan to make save settings button actually work so everyone can get their custom setting.
+;	----> from this point on fork by oldhasu
+;
+;	1.7.0 	- Added hook window function and button to stop ahk GUI change focus
+;		
+;	1.7.1	- Added Save and load setting functiinality ("Save Settings" / "Load Setting buttons"). Settings are stored in settings.ini	
+;		- Removed L-hotkey button because it interferes keyboard while script is running in background
+;
+;	Plans: code cleaning and improvement, adding button that terminates the script
 ;
 
 global game_Title := "Idle Champions"
