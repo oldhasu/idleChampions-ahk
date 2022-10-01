@@ -22,19 +22,19 @@ Idle Champions of the Forgotten Realms AHK Macro Scripts
 - from striderx2048 210614
 - edited retaki
 - edited Leyline (discord: Swamp Fox II) 2021-09-23
-- edited oldhasu (discord: oldhasu) 2022-10-01 >>> this fork <<< https://github.com/oldhasu/idleChampions-ahk
+- edited oldhasu (discord: oldhasu) 2022-10-01  <<< this fork <<< https://github.com/oldhasu/idleChampions-ahk
 
 # Helpful tips
   - Use the PAUSE / BREAK key on your keyboard to pause the script.
-  - Use HookWindow to hook this ahk script to game window (in case the game has been restarted) or just restart the script.
   - Use Save Setting / Load Settings buttons to store your own custom settings for future use.	
   - The script has a 3s delay for typing safety.
   - If you have pressed a key (anywhere in your PC) recently then you may think the script did not fire a keypress when it was supposed to
   - You are correct: it skipped the keypress command and it will continue the next loop (after 3s of no key activity that is)
   - Increment Formations:
-   	- If you want to restart the Increment Formations Timer - reload the script.  (I will add a reset button later)
+   	- If you want to restart the Increment Formations Timer - reload the script.
    	- You can "increment" the formations in any order by setting them to a shorter time delay than another formation.
    	- You can pick just one formation to increment by only setting a time delay for that formation.
   - Repeat Formation:
-   	- This is for one or more special missions where your party members are kicked out and you want to reload them (it was here when I adopted the script)
-
+   	- This is for one or more special missions where your party members are kicked out and you want to reload them
+  - Press HookWindow button to hook this ahk script to game window in case the game has been restarted.
+  - Press Exit button to terminate the script	

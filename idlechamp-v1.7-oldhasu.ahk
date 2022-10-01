@@ -4,13 +4,15 @@
 ; edited retaki
 ; credit to https://github.com/mikebaldi/Idle-Champions with courtesy permission to use
 ;
-; Current Version: 1.7.1 - 2022-09-30
-;
 ; edited Leyline (Discord: Swamp Fox II) 2021-09-23
-;	https://github.com/Leyline77/idleChampions-ahk
+;	https://github.com/Leyline77/idleChampions-ahk <<< this script forked from here
 ;
 ; edited oldhasu (Discord: oldhasu) 2022-10-01
-; https://github.com/oldhasu/idleChampions-ahk
+; https://github.com/oldhasu/idleChampions-ahk	       <<< to here
+;
+;
+; Current Version: 1.7.1 - 2022-09-30
+;
 ;
 ;	This script adopted and maintained for the benefit of the gaming community.  It is free to use for non commercial purposes.
 ;
@@ -21,20 +23,21 @@
 ;		Works by sending key or mouse clicks to the game client window, it does not read or edit memory.
 ;		Developed and defaults for screen 1280x720
 ;
-; # Helpful tips
+;# Helpful tips
 ;  - Use the PAUSE / BREAK key on your keyboard to pause the script.
-;  - Use HookWindow to hook this ahk script to game window (in case the game has been restarted) or just restart the script.
 ;  - Use Save Setting / Load Settings buttons to store your own custom settings for future use.	
 ;  - The script has a 3s delay for typing safety.
-;    - If you have pressed a key (anywhere in your PC) recently then you may think the script did not fire a keypress when it was supposed to
-;   	- You are correct: it skipped the keypress command and it will continue the next loop (after 3s of no key activity that is)
+;  - If you have pressed a key (anywhere in your PC) recently then you may think the script did not fire a keypress when it was supposed to
+;  - You are correct: it skipped the keypress command and it will continue the next loop (after 3s of no key activity that is)
 ;  - Increment Formations:
-;   	- If you want to restart the Increment Formations Timer - reload the script.  (I will add a reset button later)
+;   	- If you want to restart the Increment Formations Timer - reload the script.
 ;   	- You can "increment" the formations in any order by setting them to a shorter time delay than another formation.
 ;   	- You can pick just one formation to increment by only setting a time delay for that formation.
 ;  - Repeat Formation:
-;   	- This is for one or more special missions where your party members are kicked out and you want to reload them (it was here when I adopted the script)
-
+;   	- This is for one or more special missions where your party members are kicked out and you want to reload them
+;  - Press HookWindow button to hook this ahk script to game window in case the game has been restarted.
+;  - Press Exit button to terminate the script
+;
 ;
 ;	1.5.0
 ;		started development off ot the 1.4e code base
@@ -104,12 +107,13 @@
 ;
 ;	----> from this point on fork by oldhasu
 ;
-;	1.7.0 	- Added hook window function and button to stop ahk GUI change focus
+;	1.7.0 	- Added hook window function and button to stop ahk GUI change focus (atleast you can press checkboxes now when script is running at high click rates)
 ;		
-;	1.7.1	- Added Save and load setting functiinality ("Save Settings" / "Load Setting buttons"). Settings are stored in settings.ini	
-;		- Removed L-hotkey button because it interferes keyboard while script is running in background
+;	1.7.1	- Added Save and load setting functionality ("Save Settings" / "Load Settings" buttons). Settings are stored in settings.ini (!!!)	
+;		- Removed L-hotkey button because it interferes keyboard while script is running in background :(
+;		- Added button that terminates the script ("Exit")
 ;
-;	Plans: code cleaning and improvement, adding button that terminates the script
+;	Plans: code cleaning and improvement, looking for ways clicks to not affect gui window :)
 ;
 
 global game_Title := "Idle Champions"
@@ -313,26 +317,27 @@ makeGui() {
 
 	Gui, 1:Add, Button, xp+10 yp+20 w100 gSubPause, Pause
 	Gui, 1:Add, Button, w100 gsubResume, Resume
-	; Gui, 1:Add, Button, w100 gUpdoot, upDoot
-
-	Gui, 1:Add, Button, w100 gHookWindow, HookWindow	;(!) Hook Window button
-
-	if (vFormationChecks = 1) {
-		; Upgrqade and move these to a settings JSON or INI
-		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_Q, Set ToA Q
-		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_W, Set ToA W
-		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_E, Set ToA E
-	}
-
-	Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_GemFarm, Load Settings
-
-
 
 	Gui, 1:Add, Text,, Pause script with: `n [Win+P] `n [Pause/Break]`n
+	; Gui, 1:Add, Button, w100 gUpdoot, upDoot
+
+;	if (vFormationChecks = 1) {
+;		; Upgrqade and move these to a settings JSON or INI
+;		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_Q, Set ToA Q
+;		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_W, Set ToA W
+;		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_E, Set ToA E
+;	}
+	
+	Gui, 1:Add, Button, w100 y+12 gSave_Settings, Save Settings
+
+	Gui, 1:Add, Button, w100 y+6 gLoadSettings, Load Settings
+
+	Gui, 1:Add, Button, w100 gHookWindow, HookWindow	;(!) Hook Window button
+	
+	Gui, 1:Add, Button, w100 y+6 gExitScript, Exit
+
 
 ;	Gui, 1:Add, CheckBox, vabsurdPauseKey gUpdateFromGUI Checked0, Allow L pause
-
-	Gui, 1:Add, Button, w100 y+6 gSave_Settings, Save Settings
     
 	gosub HookWindow	;(!) Call Hook window function here befor drawing gui
 
@@ -351,6 +356,13 @@ HookWindow: 				;(!)Hook Window Function aka "Stop window from dissapear on clic
 	}
 	;
 return
+
+ExitScript:
+{
+exitapp
+}
+return
+
 
 Updoot() {
 	; test calling a function from GUI button
@@ -953,7 +965,7 @@ SetAllHeroLevel:
 return
 
 
-SetAllHeroLevel_GemFarm:  ; (!) Load Settings
+Loadsettings:  ; (!) Load Settings
 
 	OpenProcess() ; this is also here incase the game client restarted and we need new memory pointers.
 	ModuleBaseAddress() ; this is also here incase the game client restarted and we need new memory pointers.
