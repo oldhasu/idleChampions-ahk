@@ -160,31 +160,31 @@ global gCheckRestartLevelOne := 0
 
 global loadHavilarImp:=0
 
-global UserSettings := {}
-UserSettings := LoadObjectFromJSON("idleChamp-leyline.JSON")
+;global UserSettings := {}
+;UserSettings := LoadObjectFromJSON("idleChamp-leyline.JSON")
 
 
 ; move this to a loadsettings function
-if (!IsObject(UserSettings)) {
-	MsgBox, User settings missing using defaults. ;, change or View Install path before doing anything else.
-	UserSettings := {}
-	UserSettings["TargetZone"] := 230
-	UserSettings["ResetTime"] := 60
-	UserSettings["InstallPath"] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
-} else {
-	if (!UserSettings["TargetZone"]) {
-		MsgBox, Reset adventure after this zone setting failed to load, starting script with default.
-		UserSettings["TargetZone"] := 30
-	}
-	if (!UserSettings["InstallPath"]) {
-		MsgBox, Install path setting failed to load, starting script with default.
-		UserSettings["InstallPath"] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
-	}
-	if (!UserSettings["ResetTime"]) {
-		MsgBox, Reset if unable to progress after this much time failed to load, starting script with default.
-		UserSettings["ResetTime"] := 60
-	}
-}
+;if (!IsObject(UserSettings)) 
+;	MsgBox, User settings missing using defaults. ;, change or View Install path before doing anything else.
+;	UserSettings := {}
+;	UserSettings["TargetZone"] := 230
+;	UserSettings["ResetTime"] := 60
+;	UserSettings["InstallPath"] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+;} else {
+;	if (!UserSettings["TargetZone"]) {
+;		MsgBox, Reset adventure after this zone setting failed to load, starting script with default.
+;		UserSettings["TargetZone"] := 30
+;	}
+;	if (!UserSettings["InstallPath"]) {
+;		MsgBox, Install path setting failed to load, starting script with default.
+;		UserSettings["InstallPath"] := "C:\Program Files (x86)\Steam\steamapps\common\IdleChampions\"
+;	}
+;	if (!UserSettings["ResetTime"]) {
+;		MsgBox, Reset if unable to progress after this much time failed to load, starting script with default.
+;		UserSettings["ResetTime"] := 60
+;	}
+;}
 
 
 OpenProcess()
@@ -195,10 +195,6 @@ makeGui()
 ;end of main code area
 return
 
-Save_Settings() {
-	WriteObjectToJSON("idleChamp-leyline.JSON", UserSettings)
-	return
-}
 
 makeGui() {
 
@@ -325,13 +321,13 @@ makeGui() {
 		Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_E, Set ToA E
 	}
 
-	Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_GemFarm, Quick Settings
+	Gui, 1:Add, Button, w100 y+6 gSetAllHeroLevel_GemFarm, Load Settings
 
 
 
 	Gui, 1:Add, Text,, Pause script with: `n [Win+P] `n [Pause/Break]`n
 
-	Gui, 1:Add, CheckBox, vabsurdPauseKey gUpdateFromGUI Checked0, Allow L pause
+;	Gui, 1:Add, CheckBox, vabsurdPauseKey gUpdateFromGUI Checked0, Allow L pause
 
 	Gui, 1:Add, Button, w100 y+6 gSave_Settings, Save Settings
     
@@ -390,7 +386,7 @@ UpdateFromGUI: ; do the work based on GUI controls calling this subroutine
 
 	if ( RepeatFormation = 1 ) {
 		RepeatFormationTime := (1000 * RepeatFormationRate)
-		mTip("doAutoFormation %RepeatFormationRate% - %RepeatFormationTime%")
+		;mTip("doAutoFormation %RepeatFormationRate% - %RepeatFormationTime%")
 		SetTimer, doRepeatFormation, %RepeatFormationTime%
 	} else {
 		SetTimer, doRepeatFormation, Off
@@ -954,43 +950,140 @@ SetAllHeroLevel:
 return
 
 
-; Upgrqade and move these - SetAllHeroLevel subroutines - to a settings JSON or INI
-
-
-SetAllHeroLevel_GemFarm: ; (!) Custom Settings
-	gosub SetAllUlt
-	gosub SetAllHeroLevel
+SetAllHeroLevel_GemFarm:  ; (!) Load Settings
 
 	OpenProcess() ; this is also here incase the game client restarted and we need new memory pointers.
 	ModuleBaseAddress() ; this is also here incase the game client restarted and we need new memory pointers.
+	
+	if !FileExist("settings.ini")
+	{
+    	msgbox, settings.ini not found, loading default
+		FileAppend,
+(
+[Level]
+AutoLevel=0
+LevelingRate=5
+PriorityChamp=6
+ClickDmg=1
+C1=1
+C2=1
+C3=1
+C4=1
+C5=1
+C6=1
+C7=1
+C8=1
+C9=1
+C10=1
+C11=1
+C12=1
+[Ultimate]
+AutoUltimates=0
+UltRate=5
+U1=1
+U2=1
+U3=1
+U4=1
+U5=1
+U6=1
+U7=1
+U8=1
+U9=1
+U10=1
+[Formation]
+RepeatFormation=0
+RepeatFormationSelect=1
+RepeatFormationRate=5
+[Misc]
+SkipBossAnimation=0
+AutoClicker=0
+KillDistractions=0
+AutoProgress=0
+loadHavilarImp=0
+LevelUpOnReset=0
+[Increment]
+IncrementFormations=0
+IncrementFormationRateQ=0
+IncrementFormationRateW=0
+IncrementFormationRateE=0
+), settings.ini
+	}
 
-	GuiControl, 1:, C3, 0
-	GuiControl, 1:, C10, 0
+	
+	
+	LevelValsArrayToggle := Array("AutoLevel", "ClickDmg")
+	Loop, 12 {
+	Cx = C%A_Index%
+    LevelValsArrayToggle.Push(Cx)
+	}
+	for iKey, iKeyVal in LevelValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Level, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%
+	}
+	LevelValsArrayString := Array("LevelingRate", "PriorityChamp")
+	for iKey, iKeyVal in LevelValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Level, %iKeyVal%
+	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
+	} 
+	
+	UltValsArrayToggle := Array("AutoUltimates")
+	Loop, 10 {
+	Ux = U%A_Index%
+    UltValsArrayToggle.Push(Ux)
+	}
+	for iKey, iKeyVal in UltValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Ultimate, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%
+	}
+	UltValsArrayString := Array("UltRate")
+	for iKey, iKeyVal in UltValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Ultimate, %iKeyVal%
+	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
+	}	
 
-	GuiControl, 1:, U1, 0 
+	FormationValsArrayToggle := Array("RepeatFormation")
+	for iKey, iKeyVal in FormationValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Formation, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%
+	}
+	FormationValsArrayString := Array("RepeatFormationSelect", "RepeatFormationRate")
+	for iKey, iKeyVal in FormationValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Formation, %iKeyVal%
+	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
+	}
+	
+	MiscValsArrayToggle := Array("SkipBossAnimation", "AutoClicker", "KillDistractions", "AutoProgress", "loadHavilarImp", "LevelUpOnReset")
+	for iKey, iKeyVal in MiscValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Misc, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%
+	}
 
-	GuiControl, 1:, ClickDmg, 1
-
-	GuiControl, 1:, AutoLevel, 1
-
-	GuiControl, 1:, AutoUltimates, 1
-
-	GuiControl, 1:, loadHavilarImp, 0
-
-	GuiControl, 1:ChooseString, LevelingRate, 1
-
-	GuiControl, 1:ChooseString, PriorityChamp, 7
-
-	GuiControl, 1:, SkipBossAnimation, 1
-
-	GuiControl, 1:, LevelUpOnReset, 1
-
-;	gosub HookWindow (!) Maybe hook window on Load settings?
-
-	Gui, 1:Show
+	InvrementValsArrayToggle := Array("IncrementFormations")
+	for iKey, iKeyVal in InvrementValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Increment, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%	
+	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
+	}
+	InvrementValsArrayString := Array("IncrementFormationRateQ","IncrementFormationRateW", "IncrementFormationRateE")
+	for iKey, iKeyVal in InvrementValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Increment, %iKeyVal%
+	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
+	}
 	
 	Gui, 1:Submit, NoHide
+	Gui, 1:Show
 	gosub UpdateFromGUI ; start clicking
+	
+	mTip("Done!")
 
 return
 
@@ -1322,14 +1415,92 @@ Pause::
 return
 
 
-l::	; yes I did this, so that paying from steam streaming you can pause with "L"
-	; Make this configurable later with choose hotkey and INI settings.
-	if (absurdPauseKey = 1) {
-		Pause
-	} else {
-		send, l
+;l::	; yes I did this, so that paying from steam streaming you can pause with "L"
+;	; Make this configurable later with choose hotkey and INI settings.
+;	if (absurdPauseKey = 1) {
+;		Pause
+;	} else {
+;		send, l
+;	}
+;return
+
+;(!)
+Save_Settings() {
+	Gui, 1:Submit, NoHide
+
+	GuiControlGet, Autolevel
+	IniWrite,%AutoLevel%,settings.ini,Level,AutoLevel
+
+	GuiControlGet, LevelingRate
+	IniWrite,%LevelingRate%,settings.ini,Level,LevelingRate
+	
+	GuiControlGet, PriorityChamp
+	IniWrite,%PriorityChamp%,settings.ini,Level,PriorityChamp
+
+    GuiControlGet, ClickDmg
+	IniWrite,%ClickDmg%,settings.ini,Level,ClickDmg
+
+	Loop, 12 {
+	Cx = C%A_Index%
+    GuiControlGet, %Cx%
+	CxVal := %Cx%
+	IniWrite,%CxVal%,settings.ini,Level,%Cx%
 	}
-return
+
+	GuiControlGet, AutoUltimates
+	IniWrite,%AutoUltimates%,settings.ini,Ultimate,AutoUltimates
+
+	GuiControlGet, UltRate
+	IniWrite,%UltRate%,settings.ini,Ultimate,UltRate
+
+	Loop, 10 {
+	Ux = U%A_Index%
+    GuiControlGet, %Ux%
+	UxVal := %Ux%
+	IniWrite,%UxVal%,settings.ini,Ultimate,%Ux%
+	}
+
+	GuiControlGet, RepeatFormation
+	IniWrite,%RepeatFormation%,settings.ini,Formation,RepeatFormation
+
+	GuiControlGet, RepeatFormationSelect
+	IniWrite,%RepeatFormationSelect%,settings.ini,Formation,RepeatFormationSelect
+
+	GuiControlGet, RepeatFormationRate
+	IniWrite,%RepeatFormationRate%,settings.ini,Formation,RepeatFormationRate
+
+	GuiControlGet, SkipBossAnimation
+	IniWrite,%SkipBossAnimation%,settings.ini,Misc,SkipBossAnimation
+
+	GuiControlGet, AutoClicker
+	IniWrite,%AutoClicker%,settings.ini,Misc,AutoClicker
+
+	GuiControlGet, KillDistractions
+	IniWrite,%KillDistractions%,settings.ini,Misc,KillDistractions
+
+	GuiControlGet, AutoProgress
+	IniWrite,%AutoProgress%,settings.ini,Misc,AutoProgress
+
+	GuiControlGet, loadHavilarImp
+	IniWrite,%loadHavilarImp%,settings.ini,Misc,loadHavilarImp
+
+	GuiControlGet, LevelUpOnReset
+	IniWrite,%LevelUpOnReset%,settings.ini,Misc,LevelUpOnReset
+
+	GuiControlGet, IncrementFormations
+	IniWrite,%IncrementFormations%,settings.ini,Increment,IncrementFormations
+
+	GuiControlGet, IncrementFormationRateQ
+	IniWrite,%IncrementFormationRateQ%,settings.ini,Increment,IncrementFormationRateQ
+
+	GuiControlGet, IncrementFormationRateW
+	IniWrite,%IncrementFormationRateW%,settings.ini,Increment,IncrementFormationRateW
+
+	GuiControlGet, IncrementFormationRateE
+	IniWrite,%IncrementFormationRateE%,settings.ini,Increment,IncrementFormationRateE
+	
+	mTip("Done!")
+}
 
 
 
