@@ -220,7 +220,7 @@ makeGui() {
 	Gui, 1:Add, CheckBox, vClickDmg gUpdateFromGUI Checked, Click
 
 	Gui, 1:Add, Text, w50 xs ys+150, Rate (seconds):
-	Gui, 1:Add, DropDownList, w50 vLevelingRate gUpdateFromGUI, 1|5||10|15|30|60
+	Gui, 1:Add, DropDownList, w50 vLevelingRate gUpdateFromGUI, 1||5|10|15|30|60
 
 	Gui, 1:Add, Button, w50 y+6 gUnsetAllHeroLevel, Clear All
 
@@ -234,7 +234,7 @@ makeGui() {
 	Gui, 1:Add, CheckBox, vC12 gUpdateFromGUI Checked, 12
 
 	Gui, 1:Add, Text, w50 xs ys+150, Priority Seat:
-	Gui, 1:Add, DropDownList, w50 vPriorityChamp gUpdateFromGUI, 1|2|3|4|5|6||7|8|9|10|11|12|
+	Gui, 1:Add, DropDownList, w50 vPriorityChamp gUpdateFromGUI, 1|2|3|4|5|6|7||8|9|10|11|12|
 
 	Gui, 1:Add, Button, w50 y+6 gSetAllHeroLevel, Set All
 
@@ -310,7 +310,7 @@ makeGui() {
 	Gui, 1:Add, edit, xs ys+216 w120 vidletime, 00:00:00
 
 	; BOX AREA
-	Gui, 1:Add, GroupBox, x+25 y6 r13 w140,
+	Gui, 1:Add, GroupBox, x+25 y6 r13 w120,
 
 	; Just hit the X ?+
 	; Gui, 1:Add, Button, xp+10 yp+20 gQuit, Quit
@@ -346,22 +346,6 @@ makeGui() {
 	goSub UpdateFromGUI
 
 }
-
-
-HookWindow: 				;(!)Hook Window Function aka "Stop window from dissapear on clicks"
-	game_ahk_id := GetGameAhkId() 	;reload game id in case game restarted
-	IfWinExist %game_Title%
-	{
-	Gui, +owner%game_ahk_id%
-	}
-	;
-return
-
-ExitScript:
-{
-exitapp
-}
-return
 
 
 Updoot() {
@@ -964,179 +948,40 @@ SetAllHeroLevel:
 	Gui, 1:Submit, NoHide
 return
 
-
-Loadsettings:  ; (!) Load Settings
-
-	OpenProcess() ; this is also here incase the game client restarted and we need new memory pointers.
-	ModuleBaseAddress() ; this is also here incase the game client restarted and we need new memory pointers.
-	
-	if !FileExist("settings.ini")
-	{
-    	msgbox, settings.ini not found, loading default
-		FileAppend,
-(
-[Level]
-AutoLevel=0
-LevelingRate=5
-PriorityChamp=6
-ClickDmg=1
-C1=1
-C2=1
-C3=1
-C4=1
-C5=1
-C6=1
-C7=1
-C8=1
-C9=1
-C10=1
-C11=1
-C12=1
-[Ultimate]
-AutoUltimates=0
-UltRate=5
-U1=1
-U2=1
-U3=1
-U4=1
-U5=1
-U6=1
-U7=1
-U8=1
-U9=1
-U10=1
-[Formation]
-RepeatFormation=0
-RepeatFormationSelect=1
-RepeatFormationRate=5
-[Misc]
-SkipBossAnimation=0
-AutoClicker=0
-KillDistractions=0
-AutoProgress=0
-loadHavilarImp=0
-LevelUpOnReset=0
-[Increment]
-IncrementFormations=0
-IncrementFormationRateQ=0
-IncrementFormationRateW=0
-IncrementFormationRateE=0
-), settings.ini
-	}
-
-	
-	
-	LevelValsArrayToggle := Array("AutoLevel", "ClickDmg")
-	Loop, 12 {
-	Cx = C%A_Index%
-    LevelValsArrayToggle.Push(Cx)
-	}
-	for iKey, iKeyVal in LevelValsArrayToggle
-	{	
-	IniRead, SetVal, settings.ini, Level, %iKeyVal%
-	GuiControl, 1:, %iKeyVal%, %SetVal%
-	}
-	LevelValsArrayString := Array("LevelingRate", "PriorityChamp")
-	for iKey, iKeyVal in LevelValsArrayString
-	{	
-	IniRead, SetVal, settings.ini, Level, %iKeyVal%
-	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
-	} 
-	
-	UltValsArrayToggle := Array("AutoUltimates")
-	Loop, 10 {
-	Ux = U%A_Index%
-    UltValsArrayToggle.Push(Ux)
-	}
-	for iKey, iKeyVal in UltValsArrayToggle
-	{	
-	IniRead, SetVal, settings.ini, Ultimate, %iKeyVal%
-	GuiControl, 1:, %iKeyVal%, %SetVal%
-	}
-	UltValsArrayString := Array("UltRate")
-	for iKey, iKeyVal in UltValsArrayString
-	{	
-	IniRead, SetVal, settings.ini, Ultimate, %iKeyVal%
-	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
-	}	
-
-	FormationValsArrayToggle := Array("RepeatFormation")
-	for iKey, iKeyVal in FormationValsArrayToggle
-	{	
-	IniRead, SetVal, settings.ini, Formation, %iKeyVal%
-	GuiControl, 1:, %iKeyVal%, %SetVal%
-	}
-	FormationValsArrayString := Array("RepeatFormationSelect", "RepeatFormationRate")
-	for iKey, iKeyVal in FormationValsArrayString
-	{	
-	IniRead, SetVal, settings.ini, Formation, %iKeyVal%
-	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
-	}
-	
-	MiscValsArrayToggle := Array("SkipBossAnimation", "AutoClicker", "KillDistractions", "AutoProgress", "loadHavilarImp", "LevelUpOnReset")
-	for iKey, iKeyVal in MiscValsArrayToggle
-	{	
-	IniRead, SetVal, settings.ini, Misc, %iKeyVal%
-	GuiControl, 1:, %iKeyVal%, %SetVal%
-	}
-
-	InvrementValsArrayToggle := Array("IncrementFormations")
-	for iKey, iKeyVal in InvrementValsArrayToggle
-	{	
-	IniRead, SetVal, settings.ini, Increment, %iKeyVal%
-	GuiControl, 1:, %iKeyVal%, %SetVal%	
-	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
-	}
-	InvrementValsArrayString := Array("IncrementFormationRateQ","IncrementFormationRateW", "IncrementFormationRateE")
-	for iKey, iKeyVal in InvrementValsArrayString
-	{	
-	IniRead, SetVal, settings.ini, Increment, %iKeyVal%
-	GuiControl, 1:ChooseString, %iKeyVal%, %SetVal%
-	}
-	
-	Gui, 1:Submit, NoHide
-	Gui, 1:Show
-	gosub UpdateFromGUI ; start clicking
-	
-	mTip("Done!")
-
-return
-
-
-SetAllHeroLevel_Q: ; Leyline Custom TOA speed formation
-	gosub SetAllUlt
-	gosub SetAllHeroLevel
-
-	GuiControl, 1:, U1, 0 ; deekin off
-
-	GuiControl, 1:, C3, 0
-	GuiControl, 1:, C12, 0
-
-	GuiControl, 1:, ClickDmg, 1
-	Gui, 1:Submit, NoHide
-return
-
-SetAllHeroLevel_W: ; Leyline Custom TOA gold formation
-	gosub SetAllUlt
-	gosub SetAllHeroLevel
-
-	GuiControl, 1:, C3, 0
-	GuiControl, 1:, C12, 0
-
-	GuiControl, 1:, ClickDmg, 0
-	Gui, 1:Submit, NoHide
-return
-
-SetAllHeroLevel_E: ; Leyline Custom TOA push formation
-	gosub SetAllUlt
-	gosub SetAllHeroLevel
-
-	GuiControl, 1:, C9, 0
-	GuiControl, 1:, C12, 0
-
-	GuiControl, 1:, ClickDmg, 0
-	Gui, 1:Submit, NoHide
-return
+;SetAllHeroLevel_Q: ; Leyline Custom TOA speed formation
+;	gosub SetAllUlt
+;	gosub SetAllHeroLevel
+;
+;	GuiControl, 1:, U1, 0 ; deekin off
+;
+;	GuiControl, 1:, C3, 0
+;	GuiControl, 1:, C12, 0
+;
+;	GuiControl, 1:, ClickDmg, 1
+;	Gui, 1:Submit, NoHide
+;return
+;
+;SetAllHeroLevel_W: ; Leyline Custom TOA gold formation
+;	gosub SetAllUlt
+;	gosub SetAllHeroLevel
+;
+;	GuiControl, 1:, C3, 0
+;	GuiControl, 1:, C12, 0
+;
+;	GuiControl, 1:, ClickDmg, 0
+;	Gui, 1:Submit, NoHide
+;return
+;
+;SetAllHeroLevel_E: ; Leyline Custom TOA push formation
+;	gosub SetAllUlt
+;	gosub SetAllHeroLevel
+;
+;	GuiControl, 1:, C9, 0
+;	GuiControl, 1:, C12, 0
+;
+;	GuiControl, 1:, ClickDmg, 0
+;	Gui, 1:Submit, NoHide
+;return
 
 UnsetAllUlt:
 	GuiControl, 1:, U1, 0
@@ -1352,12 +1197,12 @@ LoadIC() {
 
 
 subPause:
-	mTip("Script Paused")
+	;mTip("Script Paused")
 	Pause
 return
 
 subResume:
-	mTip("Script Resumed")
+	;mTip("Script Resumed")
 	Pause, 0
 return
 
@@ -1412,11 +1257,11 @@ Return
 	doLeveUps("{F1}", 5)
 Return
 
->^numpad4:: ; hotkey
+>^Right:: ; hotkey
 	goSub doResetGame
 return
 
->^NumpadSub:: ; hotkey (rightCTRL) + Numpad + - (minus) for quick reloads during development
+>^NumpadSub:: ; hotkey (rightCTRL) + -> (right arrow) for quick reloads during development
 	KeyWait, ctrl    ; Waits for the ctrl key to be released before continuing the script.
 	Reload
 return
@@ -1439,85 +1284,216 @@ return
 ;	}
 ;return
 
-;(!)
-Save_Settings() {
+Save_Settings:   		; (!) Save Settings
 	Gui, 1:Submit, NoHide
 
-	GuiControlGet, Autolevel
-	IniWrite,%AutoLevel%,settings.ini,Level,AutoLevel
-
-	GuiControlGet, LevelingRate
-	IniWrite,%LevelingRate%,settings.ini,Level,LevelingRate
-	
-	GuiControlGet, PriorityChamp
-	IniWrite,%PriorityChamp%,settings.ini,Level,PriorityChamp
-
-    GuiControlGet, ClickDmg
-	IniWrite,%ClickDmg%,settings.ini,Level,ClickDmg
-
+	SaveLevelArray := Array("Autolevel","LevelingRate", "PriorityChamp", "ClickDmg")
 	Loop, 12 {
 	Cx = C%A_Index%
-    GuiControlGet, %Cx%
-	CxVal := %Cx%
-	IniWrite,%CxVal%,settings.ini,Level,%Cx%
+    	SaveLevelArray.Push(Cx)
+	}
+	for i, KeyName in SaveLevelArray
+	{
+	GuiControlGet, %Keyname%
+	Keyval := %Keyname%
+	IniWrite, %Keyval%,settings.ini,Level,%KeyName%	
 	}
 
-	GuiControlGet, AutoUltimates
-	IniWrite,%AutoUltimates%,settings.ini,Ultimate,AutoUltimates
-
-	GuiControlGet, UltRate
-	IniWrite,%UltRate%,settings.ini,Ultimate,UltRate
-
+	SaveUltimateArray := Array("AutoUltimates", "UltRate")
 	Loop, 10 {
 	Ux = U%A_Index%
-    GuiControlGet, %Ux%
-	UxVal := %Ux%
-	IniWrite,%UxVal%,settings.ini,Ultimate,%Ux%
+   	SaveUltimateArray.Push(Ux)
+	}
+	for i, KeyName in SaveUltimateArray
+	{
+	GuiControlGet, %KeyName%
+	Keyval := %Keyname%
+	IniWrite, %Keyval%,settings.ini,Ultimate,%KeyName%	
+	}
+	
+	SaveFormationArray := Array("RepeatFormation", "RepeatFormationSelect", "RepeatFormationRate")
+	for i, KeyName in SaveFormationArray
+	{
+	GuiControlGet, %KeyName%
+	Keyval := %Keyname%
+	IniWrite, %Keyval%,settings.ini,Formation,%KeyName%	
+	}
+	
+	SaveMiscArray := Array("SkipBossAnimation", "AutoClicker", "KillDistractions", "AutoProgress", "loadHavilarImp", "LevelUpOnReset")
+	for i, KeyName in SaveMiscArray 
+	{
+	GuiControlGet, %KeyName%
+	Keyval := %Keyname%
+	IniWrite, %Keyval%,settings.ini,Misc,%KeyName%	
 	}
 
-	GuiControlGet, RepeatFormation
-	IniWrite,%RepeatFormation%,settings.ini,Formation,RepeatFormation
-
-	GuiControlGet, RepeatFormationSelect
-	IniWrite,%RepeatFormationSelect%,settings.ini,Formation,RepeatFormationSelect
-
-	GuiControlGet, RepeatFormationRate
-	IniWrite,%RepeatFormationRate%,settings.ini,Formation,RepeatFormationRate
-
-	GuiControlGet, SkipBossAnimation
-	IniWrite,%SkipBossAnimation%,settings.ini,Misc,SkipBossAnimation
-
-	GuiControlGet, AutoClicker
-	IniWrite,%AutoClicker%,settings.ini,Misc,AutoClicker
-
-	GuiControlGet, KillDistractions
-	IniWrite,%KillDistractions%,settings.ini,Misc,KillDistractions
-
-	GuiControlGet, AutoProgress
-	IniWrite,%AutoProgress%,settings.ini,Misc,AutoProgress
-
-	GuiControlGet, loadHavilarImp
-	IniWrite,%loadHavilarImp%,settings.ini,Misc,loadHavilarImp
-
-	GuiControlGet, LevelUpOnReset
-	IniWrite,%LevelUpOnReset%,settings.ini,Misc,LevelUpOnReset
-
-	GuiControlGet, IncrementFormations
-	IniWrite,%IncrementFormations%,settings.ini,Increment,IncrementFormations
-
-	GuiControlGet, IncrementFormationRateQ
-	IniWrite,%IncrementFormationRateQ%,settings.ini,Increment,IncrementFormationRateQ
-
-	GuiControlGet, IncrementFormationRateW
-	IniWrite,%IncrementFormationRateW%,settings.ini,Increment,IncrementFormationRateW
-
-	GuiControlGet, IncrementFormationRateE
-	IniWrite,%IncrementFormationRateE%,settings.ini,Increment,IncrementFormationRateE
+	SaveIncrementArray := Array("IncrementFormations", "IncrementFormationRateQ", "IncrementFormationRateW", "IncrementFormationRateE" )
+	for i, KeyName in SaveIncrementArray
+	{
+	GuiControlGet, %KeyName%
+	Keyval := %Keyname%
+	IniWrite, %Keyval%,settings.ini,Increment,%KeyName%	
+	}
 	
-	mTip("Done!")
+	;mTip("Done!")
+return
+
+Loadsettings:  			; (!) Load Settings
+
+	OpenProcess() ; this is also here incase the game client restarted and we need new memory pointers.
+	ModuleBaseAddress() ; this is also here incase the game client restarted and we need new memory pointers.
+	
+	if !FileExist("settings.ini")
+	{
+    	msgbox, settings.ini not found, loading default
+	Gosub DefaultINI				; Load default settings.ini if not found
+	return
+	}
+	
+	LevelValsArrayToggle := Array("AutoLevel", "ClickDmg")
+	Loop, 12 {
+	Cx = C%A_Index%
+	    LevelValsArrayToggle.Push(Cx)
+	}
+	for i, iKeyVal in LevelValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Level, %iKeyVal%
+	GuiControl, 1:, %iKeyVal%, %SetVal%
+	}
+	LevelValsArrayString := Array("LevelingRate", "PriorityChamp")
+	for i, KeyName in LevelValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Level, %KeyName%
+	GuiControl, 1:ChooseString, %KeyName%, %SetVal%
+	} 
+	
+	UltValsArrayToggle := Array("AutoUltimates")
+	Loop, 10 {
+	Ux = U%A_Index%
+    	UltValsArrayToggle.Push(Ux)
+	}
+	for i, KeyName in UltValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Ultimate, %KeyName%
+	GuiControl, 1:, %KeyName%, %SetVal%
+	}
+	UltValsArrayString := Array("UltRate")
+	for i, KeyName in UltValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Ultimate, %KeyName%
+	GuiControl, 1:ChooseString, %KeyName%, %SetVal%
+	}	
+
+	FormationValsArrayToggle := Array("RepeatFormation")
+	for i, KeyName in FormationValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Formation, %KeyName%
+	GuiControl, 1:, %KeyName%, %SetVal%
+	}
+	FormationValsArrayString := Array("RepeatFormationSelect", "RepeatFormationRate")
+	for i, KeyName in FormationValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Formation, %KeyName%
+	GuiControl, 1:ChooseString, %KeyName%, %SetVal%
+	}
+	
+	MiscValsArrayToggle := Array("SkipBossAnimation", "AutoClicker", "KillDistractions", "AutoProgress", "loadHavilarImp", "LevelUpOnReset")
+	for i, KeyName in MiscValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Misc, %KeyName%
+	GuiControl, 1:, %KeyName%, %SetVal%
+	}
+
+	InvrementValsArrayToggle := Array("IncrementFormations")
+	for i, KeyName in InvrementValsArrayToggle
+	{	
+	IniRead, SetVal, settings.ini, Increment, %KeyName%
+	GuiControl, 1:, %KeyName%, %SetVal%	
+	GuiControl, 1:ChooseString, %KeyName%, %SetVal%
+	}
+	InvrementValsArrayString := Array("IncrementFormationRateQ","IncrementFormationRateW", "IncrementFormationRateE")
+	for i, KeyName in InvrementValsArrayString
+	{	
+	IniRead, SetVal, settings.ini, Increment, %KeyName%
+	GuiControl, 1:ChooseString, %KeyName%, %SetVal%
+	}
+	
+	Gui, 1:Submit, NoHide
+	Gui, 1:Show
+	gosub UpdateFromGUI ; start clicking
+	
+	;mTip("Done!")
+
+return
+
+HookWindow: 				;(!)Hook Window Function aka "Stop window from dissapear on clicks"
+	game_ahk_id := GetGameAhkId() 	;reload game id in case game restarted
+	IfWinExist %game_Title%
+	{
+	Gui, +owner%game_ahk_id%
+	}
+	;
+return
+
+
+ExitScript: 				 ; (!) Close Script function
+{
+exitapp
 }
+return
 
 
+DefaultINI:			; Create Default settings.ini
+FileAppend,
+(
+[Level]
+AutoLevel=0
+LevelingRate=1
+PriorityChamp=7
+ClickDmg=1
+C1=1
+C2=1
+C3=1
+C4=1
+C5=1
+C6=1
+C7=1
+C8=1
+C9=1
+C10=1
+C11=1
+C12=1
+[Ultimate]
+AutoUltimates=0
+UltRate=5
+U1=1
+U2=1
+U3=1
+U4=1
+U5=1
+U6=1
+U7=1
+U8=1
+U9=1
+U10=1
+[Formation]
+RepeatFormation=0
+RepeatFormationSelect=1
+RepeatFormationRate=5
+[Misc]
+SkipBossAnimation=0
+AutoClicker=0
+KillDistractions=0
+AutoProgress=0
+loadHavilarImp=0
+LevelUpOnReset=0
+[Increment]
+IncrementFormations=0
+IncrementFormationRateQ=0
+IncrementFormationRateW=0
+IncrementFormationRateE=0
+), settings.ini
+return
 
 Quit:
 ExitApp
